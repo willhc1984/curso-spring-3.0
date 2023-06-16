@@ -18,11 +18,6 @@ public class PersonService {
 		return personRepository.save(person);
 	}
 	
-	public Person update(Long id) {
-		Person person = personRepository.findById(id).get();
-		return personRepository.save(person);
-	}
-	
 	public List<Person> getAll() {
 		return personRepository.findAll();	
 	}
@@ -33,6 +28,19 @@ public class PersonService {
 	
 	public void delete(Person person) {
 		personRepository.delete(person);
+	}
+	
+	public Person update(Long id, Person person) {
+		Person obj = personRepository.findById(id).get();
+		updateData(obj, person);
+		return personRepository.save(obj);
+	}
+	
+	private void updateData(Person obj, Person person) {
+		obj.setFirstName(person.getFirstName());
+		obj.setLastName(person.getLastName());
+		obj.setAddress(person.getAddress());
+		obj.setGender(person.getGender());
 	}
 
 }

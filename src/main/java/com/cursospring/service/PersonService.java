@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cursospring.dto.PersonDTO;
+import com.cursospring.mapper.DozerMapper;
 import com.cursospring.model.Person;
 import com.cursospring.repository.PersonRepository;
 
@@ -14,33 +16,34 @@ public class PersonService {
 	@Autowired
 	private PersonRepository personRepository;
 	
-	public Person save(Person person) {
-		return personRepository.save(person);
+	public List<PersonDTO> getAll() {
+		return DozerMapper.parseListObjects(personRepository.findAll(), PersonDTO.class);	
 	}
 	
-	public List<Person> getAll() {
-		return personRepository.findAll();	
+	public PersonDTO getById(Long id) {
+		return DozerMapper.parseObject(personRepository.findById(id).get(), PersonDTO.class);
 	}
 	
-	public Person getById(Long id) {
-		return personRepository.findById(id).get();
+	public PersonDTO save(PersonDTO person) {
+		var entity = DozerMapper.parseObject(person, Person.class);
+		var dto = DozerMapper.parseObject(personRepository.save(entity), PersonDTO.class);
+		return dto;
 	}
 	
-	public void delete(Person person) {
-		personRepository.delete(person);
+	public void delete(Long id) {
+		var entity = personRepository.findById(id).get();
+		personRepository.delete(entity);
 	}
 	
-	public Person update(Long id, Person person) {
-		Person obj = personRepository.findById(id).get();
-		updateData(obj, person);
-		return personRepository.save(obj);
-	}
-	
-	private void updateData(Person obj, Person person) {
-		obj.setFirstName(person.getFirstName());
-		obj.setLastName(person.getLastName());
-		obj.setAddress(person.getAddress());
-		obj.setGender(person.getGender());
+	public PersonDTO update(PersonDTO person) {
+		Person entity = personRepository.findById(person.getId()).get();
+		entity.setFirstName(person.getFirstName());
+		entity.setLastName(person.getLastName());
+		entity.setAddress(person.getAddress());
+		entity.setGender(person.getGender());
+		
+		var dto = DozerMapper.parseObject(personRepository.save(entity), PersonDTO.class);
+		return dto;
 	}
 
 }

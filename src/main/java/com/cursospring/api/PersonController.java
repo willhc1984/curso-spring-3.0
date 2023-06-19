@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cursospring.dto.PersonDTO;
 import com.cursospring.model.Person;
 import com.cursospring.service.PersonService;
 
@@ -25,7 +26,7 @@ public class PersonController {
 	private PersonService personService;
 	
 	@GetMapping
-	public ResponseEntity<List<Person>> getAll(){
+	public ResponseEntity<List<PersonDTO>> getAll(){
 		return ResponseEntity.status(HttpStatus.OK).body(personService.getAll());
 	}
 	
@@ -36,23 +37,18 @@ public class PersonController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> save(@RequestBody Person person){
+	public ResponseEntity<Object> save(@RequestBody PersonDTO person){
 		return ResponseEntity.status(HttpStatus.CREATED).body(personService.save(person));
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Object> update(@RequestBody Person person, @PathVariable Long id){
-		return ResponseEntity.status(HttpStatus.OK).body(personService.update(id, person));
+	public ResponseEntity<Object> update(@RequestBody PersonDTO person, @PathVariable Long id){
+		return ResponseEntity.status(HttpStatus.OK).body(personService.update(person));
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> deleteById(@PathVariable Long id, @RequestBody Person person){
-		person = personService.getById(person.getId());
-		if(person == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-		
-		personService.delete(person);				
+	public ResponseEntity<Object> deleteById(@PathVariable Long id){
+		personService.delete(id);				
 		return ResponseEntity.status(HttpStatus.OK).body("deleted!");
 	}
 }
